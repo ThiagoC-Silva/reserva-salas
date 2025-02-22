@@ -7,7 +7,11 @@ SECRET_KEY = 'sua_chave_secreta_aqui'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'reserva-salas.onrender.com', 
+    'localhost',                   
+    '127.0.0.1',                   
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
