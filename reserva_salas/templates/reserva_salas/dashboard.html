@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Reserva de Salas</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { margin-bottom: 20px; }
+        .card { margin-bottom: 20px; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .card-header { background-color: #007bff; color: white; font-weight: bold; }
+        .list-group-item { border: none; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .btn-primary { background-color: #007bff; border: none; }
+        .btn-primary:hover { background-color: #0056b3; }
+        .alert-danger { margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Reserva de Salas</a>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Salas Disponíveis</div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for sala in salas %}
+                            <li class="list-group-item">
+                                <h5 class="card-title">{{ sala.nome }}</h5>
+                                <p class="card-text">Capacidade: {{ sala.capacidade }} pessoas</p>
+                                <p class="card-text">
+                                    {% if sala.disponivel %}
+                                        <span class="badge badge-success">Disponível</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Indisponível</span>
+                                    {% endif %}
+                                </p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Reservas</div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for reserva in reservas %}
+                            <li class="list-group-item">
+                                <h5 class="card-title">{{ reserva.sala.nome }}</h5>
+                                <p class="card-text">
+                                    <strong>Data:</strong> {{ reserva.data_reserva }}<br>
+                                    <strong>Horário:</strong> {{ reserva.hora_inicio }} - {{ reserva.hora_fim }}<br>
+                                    <strong>Responsável:</strong> {{ reserva.responsavel }}<br>
+                                    <strong>Descrição:</strong> {{ reserva.descricao }}
+                                </p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Nova Reserva</div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="form-group">
+                                <label for="id_sala">Sala</label>
+                                {{ form.sala }}
+                                {% if form.sala.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.sala.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_data_reserva">Data da Reserva</label>
+                                {{ form.data_reserva }}
+                                <small class="form-text text-muted">Formato: DD/MM/AAAA</small>
+                                {% if form.data_reserva.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.data_reserva.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="id_hora_inicio">Hora de Início</label>
+                                    {{ form.hora_inicio }}
+                                    <small class="form-text text-muted">Formato: HH:MM</small>
+                                    {% if form.hora_inicio.errors %}
+                                        <div class="alert alert-danger">
+                                            {{ form.hora_inicio.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="id_hora_fim">Hora de Término</label>
+                                    {{ form.hora_fim }}
+                                    <small class="form-text text-muted">Formato: HH:MM</small>
+                                    {% if form.hora_fim.errors %}
+                                        <div class="alert alert-danger">
+                                            {{ form.hora_fim.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_responsavel">Responsável</label>
+                                {{ form.responsavel }}
+                                {% if form.responsavel.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.responsavel.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_descricao">Descrição</label>
+                                {{ form.descricao }}
+                                {% if form.descricao.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.descricao.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Reservar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
