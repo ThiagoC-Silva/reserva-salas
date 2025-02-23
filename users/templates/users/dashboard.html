@@ -20,7 +20,6 @@
                     <tr>
                         <th>Nome</th>
                         <th>Capacidade</th>
-                        <th>Disponível</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,7 +27,6 @@
                     <tr>
                         <td>{{ sala.nome }}</td>
                         <td>{{ sala.capacidade }}</td>
-                        <td>{{ sala.disponivel|yesno:"Sim,Não" }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

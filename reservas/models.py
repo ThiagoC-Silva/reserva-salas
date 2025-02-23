@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 class Sala(models.Model):
     nome = models.CharField(max_length=100, unique=True)
     capacidade = models.PositiveIntegerField()
-    disponivel = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nome
@@ -21,11 +20,6 @@ class Reserva(models.Model):
         return f"{self.usuario.username} - {self.sala.nome} ({self.data} {self.hora_inicio}-{self.hora_fim})"
 
     def clean(self):
-       
-        if not self.sala.disponivel:
-            raise ValidationError("Esta sala não está disponível para reserva.")
-
-        
         conflitos = Reserva.objects.filter(
             sala=self.sala,
             data=self.data,
