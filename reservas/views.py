@@ -1,5 +1,5 @@
 from django.forms import ValidationError
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Reserva, Sala
@@ -31,3 +31,10 @@ def criar_reserva(request):
         return redirect('dashboard')
     else:
         return redirect('dashboard')
+    
+@login_required
+def cancelar_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    reserva.delete()
+    messages.success(request, 'Reserva cancelada com sucesso!')
+    return redirect('dashboard')

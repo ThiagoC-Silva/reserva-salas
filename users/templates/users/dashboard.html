@@ -2,6 +2,16 @@
 
 {% block content %}
 <div class="container mt-5">
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-md-4">
             <h2>Salas Disponíveis</h2>
@@ -61,6 +71,7 @@
                         <th>Sala</th>
                         <th>Data</th>
                         <th>Horário</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +80,12 @@
                         <td>{{ reserva.sala.nome }}</td>
                         <td>{{ reserva.data }}</td>
                         <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fim }}</td>
+                        <td>
+                            <form method="post" action="{% url 'cancelar_reserva' reserva.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
