@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'criar_reserva' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Reservar</button>
+</form>

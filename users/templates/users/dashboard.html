@@ -3,9 +3,59 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <h2>Dashboard</h2>
-            <p>Bem-vindo, {{ user.username }}!</p>
+        <div class="col-md-6">
+            <h2>Salas Disponíveis</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Capacidade</th>
+                        <th>Disponível</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sala in salas %}
+                    <tr>
+                        <td>{{ sala.nome }}</td>
+                        <td>{{ sala.capacidade }}</td>
+                        <td>{{ sala.disponivel|yesno:"Sim,Não" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Fazer Reserva</h2>
+            <form method="post" action="{% url 'criar_reserva' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="sala">Sala</label>
+                    <select class="form-control" id="sala" name="sala" required>
+                        {% for sala in salas %}
+                        <option value="{{ sala.id }}">{{ sala.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data">Data</label>
+                    <input type="date" class="form-control" id="data" name="data" required>
+                </div>
+                <div class="form-group">
+                    <label for="hora_inicio">Hora de Início</label>
+                    <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="hora_fim">Hora de Término</label>
+                    <input type="time" class="form-control" id="hora_fim" name="hora_fim" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Reservar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
             <a href="{% url 'logout' %}" class="btn btn-danger">Sair</a>
         </div>
     </div>
