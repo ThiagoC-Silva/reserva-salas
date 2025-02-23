@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class Sala(models.Model):
     nome = models.CharField(max_length=100, unique=True)
@@ -20,15 +21,31 @@ class Reserva(models.Model):
         return f"{self.usuario.username} - {self.sala.nome} ({self.data} {self.hora_inicio}-{self.hora_fim})"
 
     def clean(self):
-        conflitos = Reserva.objects.filter(
+        if self.data < timezone.now().date():
+            raise ValidationError("A data da reserva não pode ser no passado. Por favor, selecione uma data futura.")
+
+        if self.hora_fim <= self.hora_inicio:
+            raise ValidationError("O horário de término deve ser após o horário de início. Por favor, ajuste os horários.")
+
+        conflitos_usuario = Reserva.objects.filter(
+            usuario=self.usuario,
+            data=self.data,
+            hora_inicio__lt=self.hora_fim,
+            hora_fim__gt=self.hora_inicio,
+        ).exclude(id=self.id)  
+
+        if conflitos_usuario.exists():
+            raise ValidationError("Você já tem uma reserva para este horário. Por favor, escolha outro horário.")
+
+        conflitos_sala = Reserva.objects.filter(
             sala=self.sala,
             data=self.data,
             hora_inicio__lt=self.hora_fim,
             hora_fim__gt=self.hora_inicio,
         ).exclude(id=self.id)  
 
-        if conflitos.exists():
-            raise ValidationError("Já existe uma reserva para esta sala no horário selecionado.")
+        if conflitos_sala.exists():
+            raise ValidationError("Esta sala já está reservada para o horário selecionado. Por favor, escolha outro horário ou sala.")
 
     def save(self, *args, **kwargs):
         self.clean()  

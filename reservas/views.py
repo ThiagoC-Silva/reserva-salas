@@ -21,12 +21,18 @@ def criar_reserva(request):
                 hora_inicio=hora_inicio,
                 hora_fim=hora_fim
             )
-            reserva.save()  
+            reserva.full_clean()  
+            reserva.save()
             messages.success(request, 'Reserva realizada com sucesso!')
         except ValidationError as e:
-            messages.error(request, e.message)
+            for field, errors in e.message_dict.items():
+                for error in errors:
+                    if field == '__all__':
+                        messages.error(request, error)  
+                    else:
+                        messages.error(request, f"{field}: {error}")
         except Exception as e:
-            messages.error(request, 'Ocorreu um erro ao realizar a reserva.')
+            messages.error(request, 'Ocorreu um erro ao realizar a reserva. Tente novamente.')
 
         return redirect('dashboard')
     else:

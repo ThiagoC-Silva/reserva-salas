@@ -1,0 +1,44 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-edit"></i> Editar Reserva</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="sala">Sala</label>
+                            <select class="form-control" id="sala" name="sala" required>
+                                {% for sala in salas %}
+                                <option value="{{ sala.id }}" {% if sala.id == form.sala.value %}selected{% endif %}>
+                                    {{ sala.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="data">Data</label>
+                            <input type="date" class="form-control" id="data" name="data" value="{{ form.data.value }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hora_inicio">Hora de Início</label>
+                            <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="{{ form.hora_inicio.value }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hora_fim">Hora de Término</label>
+                            <input type="time" class="form-control" id="hora_fim" name="hora_fim" value="{{ form.hora_fim.value }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
