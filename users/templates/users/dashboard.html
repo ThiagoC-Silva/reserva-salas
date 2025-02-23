@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <h2>Salas Disponíveis</h2>
             <table class="table table-bordered">
                 <thead>
@@ -25,7 +25,7 @@
             </table>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             <h2>Fazer Reserva</h2>
             <form method="post" action="{% url 'criar_reserva' %}">
                 {% csrf_token %}
@@ -51,6 +51,54 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Reservar</button>
             </form>
+        </div>
+
+        <div class="col-md-4">
+            <h2>Minhas Reservas</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sala</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in minhas_reservas %}
+                    <tr>
+                        <td>{{ reserva.sala.nome }}</td>
+                        <td>{{ reserva.data }}</td>
+                        <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fim }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h2>Reservas de Outros Usuários</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Sala</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in outras_reservas %}
+                    <tr>
+                        <td>{{ reserva.usuario.username }}</td>
+                        <td>{{ reserva.sala.nome }}</td>
+                        <td>{{ reserva.data }}</td>
+                        <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fim }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 

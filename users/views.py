@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from reservas.models import Sala
+from reservas.models import Reserva, Sala
 
 def login_view(request):
     if request.method == 'POST':
@@ -39,8 +39,17 @@ from reservas.models import Sala
 def dashboard_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
+
     salas = Sala.objects.all()
-    return render(request, 'users/dashboard.html', {'user': request.user, 'salas': salas})
+    minhas_reservas = Reserva.objects.filter(usuario=request.user)
+    outras_reservas = Reserva.objects.exclude(usuario=request.user)
+
+    return render(request, 'users/dashboard.html', {
+        'user': request.user,
+        'salas': salas,
+        'minhas_reservas': minhas_reservas,
+        'outras_reservas': outras_reservas,
+    })
 
 def logout_view(request):
     logout(request)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class Sala(models.Model):
     nome = models.CharField(max_length=100, unique=True)
@@ -17,4 +18,24 @@ class Reserva(models.Model):
     hora_fim = models.TimeField()
 
     def __str__(self):
-        return f"{self.usuario.username} - {self.sala.nome} ({self.data})"
+        return f"{self.usuario.username} - {self.sala.nome} ({self.data} {self.hora_inicio}-{self.hora_fim})"
+
+    def clean(self):
+       
+        if not self.sala.disponivel:
+            raise ValidationError("Esta sala não está disponível para reserva.")
+
+        
+        conflitos = Reserva.objects.filter(
+            sala=self.sala,
+            data=self.data,
+            hora_inicio__lt=self.hora_fim,
+            hora_fim__gt=self.hora_inicio,
+        ).exclude(id=self.id)  
+
+        if conflitos.exists():
+            raise ValidationError("Já existe uma reserva para esta sala no horário selecionado.")
+
+    def save(self, *args, **kwargs):
+        self.clean()  
+        super().save(*args, **kwargs)
